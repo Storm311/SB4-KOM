@@ -17,6 +17,9 @@ import dk.sdu.storm331.cbse.managers.GameInputProcessor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.ServiceLoader;
+
+import static java.util.stream.Collectors.toList;
 
 public class Game
         implements ApplicationListener {
@@ -44,31 +47,10 @@ public class Game
         Gdx.input.setInputProcessor(
                 new GameInputProcessor(gameData)
         );
-        /*
-        //player
-        IGamePluginService playerPlugin = new PlayerPlugin();
-        IEntityProcessingService playerProcess = new PlayerControlSystem();
-        entityPlugins.add(playerPlugin);
-        entityProcessors.add(playerProcess);
-
-        //Enemy
-        IGamePluginService enemyPlugin = new EnemyPlugin();
-        IEntityProcessingService enemyProcess = new EnemyControlSystem();
-        entityPlugins.add(enemyPlugin);
-        entityProcessors.add(enemyProcess);
-
-        //Asteroid
-        IGamePluginService asteroidPlugin = new AsteroidPlugin();
-        IEntityProcessingService asteroidProcces = new AsteroidProcessor();
-        entityPlugins.add(asteroidPlugin);
-        entityProcessors.add(asteroidProcces);
 
 
-        */
-
-        // Lookup all Game Plugins using ServiceLoader
-        for (IGamePluginService iGamePlugin : entityPlugins) {
-            iGamePlugin.start(gameData, world);
+        for (IGamePluginService gamePlugin : getPluginServices()) {
+            gamePlugin.start(gameData, world);
         }
     }
 
@@ -137,14 +119,14 @@ public class Game
     }
 
     private Collection<? extends IGamePluginService> getPluginServices() {
-        return SPILocator.locateAll(IGamePluginService.class);
+        return ServiceLoader.load(IGamePluginService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
     }
 
     private Collection<? extends IEntityProcessingService> getEntityProcessingServices() {
-        return SPILocator.locateAll(IEntityProcessingService.class);
+        return ServiceLoader.load(IEntityProcessingService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
     }
 
     private Collection<? extends IPostEntityProcessingService> getPostEntityProcessingServices() {
-        return SPILocator.locateAll(IPostEntityProcessingService.class);
+        return ServiceLoader.load(IPostEntityProcessingService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
     }
 }

@@ -1,21 +1,23 @@
 package dk.sdu.storm331.cbse.main;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
 public class Main {
 	
 	public static void main(String[] args) {
+
+		int width = 1400;
+		int height = 800;
+
+		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+		config.setTitle("storm331 - Asteroids");
+		config.setWindowedMode(width, height);
+		config.setWindowSizeLimits(width,height,width,height);
+		config.setResizable(false);
+
 		
-		LwjglApplicationConfiguration cfg =
-			new LwjglApplicationConfiguration();
-		cfg.title = "Asteroids";
-		cfg.width = 500;
-		cfg.height = 400;
-		cfg.useGL30 = false;
-		cfg.resizable = false;
-		
-		new LwjglApplication(new Game(), cfg);
+		new Lwjgl3Application(new Game(), config);
 		
 	}
 	
