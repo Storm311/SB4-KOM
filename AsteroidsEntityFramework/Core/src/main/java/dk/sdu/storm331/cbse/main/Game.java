@@ -13,6 +13,7 @@ import dk.sdu.storm331.cbse.common.services.IGamePluginService;
 import dk.sdu.storm331.cbse.common.services.IPostEntityProcessingService;
 import dk.sdu.storm331.cbse.common.util.SPILocator;
 import dk.sdu.storm331.cbse.components.IProcessor;
+import dk.sdu.storm331.cbse.components.PluginInjection;
 import dk.sdu.storm331.cbse.managers.GameInputProcessor;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -60,9 +61,7 @@ public class Game
         );
 
 
-        for (IGamePluginService gamePlugin : getPluginServices()) {
-            gamePlugin.start(gameData, world);
-        }
+        ((PluginInjection) components.getBean("pluginInjector")).startPlugins(gameData, world);
     }
 
     @Override
