@@ -12,7 +12,10 @@ import dk.sdu.storm331.cbse.common.services.IEntityProcessingService;
 import dk.sdu.storm331.cbse.common.services.IGamePluginService;
 import dk.sdu.storm331.cbse.common.services.IPostEntityProcessingService;
 import dk.sdu.storm331.cbse.common.util.SPILocator;
+import dk.sdu.storm331.cbse.components.IProcessor;
 import dk.sdu.storm331.cbse.managers.GameInputProcessor;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,16 +24,24 @@ import java.util.ServiceLoader;
 
 import static java.util.stream.Collectors.toList;
 
+@Component("game")
 public class Game
         implements ApplicationListener {
 
     private static OrthographicCamera cam;
+    private final AnnotationConfigApplicationContext components;
     private ShapeRenderer sr;
 
     private final GameData gameData = new GameData();
     private List<IEntityProcessingService> entityProcessors = new ArrayList<>();
     private List<IGamePluginService> entityPlugins = new ArrayList<>();
     private World world = new World();
+
+    public Game() {
+        this.components = new AnnotationConfigApplicationContext();
+        this.components.scan("dk.sdu.storm331.cbse.components");
+        this.components.refresh();
+    }
 
     @Override
     public void create() {
@@ -73,12 +84,8 @@ public class Game
 
     private void update() {
         // Update
-        for (IEntityProcessingService entityProcessorService : getEntityProcessingServices()) {
-            entityProcessorService.process(gameData, world);
-        }
-        for (IPostEntityProcessingService postEntityProcessorService : getPostEntityProcessingServices()) {
-            postEntityProcessorService.process(gameData, world);
-        }
+        ((IProcessor) components.getBean("processorInjector")).process(gameData, world);
+        ((IProcessor) components.getBean("postProcessorInjector")).process(gameData, world);
     }
 
     private void draw() {

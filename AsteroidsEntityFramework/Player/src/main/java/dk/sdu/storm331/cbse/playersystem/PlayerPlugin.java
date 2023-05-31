@@ -3,6 +3,7 @@ package dk.sdu.storm331.cbse.playersystem;
 import dk.sdu.storm331.cbse.common.data.Entity;
 import dk.sdu.storm331.cbse.common.data.GameData;
 import dk.sdu.storm331.cbse.common.data.World;
+import dk.sdu.storm331.cbse.common.data.entityparts.LifePart;
 import dk.sdu.storm331.cbse.common.data.entityparts.MovingPart;
 import dk.sdu.storm331.cbse.common.data.entityparts.PositionPart;
 import dk.sdu.storm331.cbse.common.services.IGamePluginService;
@@ -35,6 +36,7 @@ public class PlayerPlugin implements IGamePluginService {
         Entity playerShip = new Player();
         playerShip.add(new MovingPart(deacceleration, acceleration, maxSpeed, rotationSpeed));
         playerShip.add(new PositionPart(x, y, radians));
+        playerShip.add(new LifePart(1));
         
         return playerShip;
     }

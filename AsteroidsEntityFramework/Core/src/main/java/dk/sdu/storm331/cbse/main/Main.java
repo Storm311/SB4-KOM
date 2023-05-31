@@ -1,7 +1,9 @@
 package dk.sdu.storm331.cbse.main;
 
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class Main {
 	
@@ -16,8 +18,11 @@ public class Main {
 		config.setWindowSizeLimits(width,height,width,height);
 		config.setResizable(false);
 
-		
-		new Lwjgl3Application(new Game(), config);
+		AnnotationConfigApplicationContext application = new AnnotationConfigApplicationContext();
+		application.scan("dk.sdu.storm331.cbse.main");
+		application.refresh();
+
+		new Lwjgl3Application((ApplicationListener) application.getBean("game"), config);
 		
 	}
 	

@@ -9,10 +9,11 @@ import static dk.sdu.storm331.cbse.common.data.GameKeys.UP;
 
 import dk.sdu.storm331.cbse.common.data.GameKeys;
 import dk.sdu.storm331.cbse.common.data.World;
+import dk.sdu.storm331.cbse.common.data.entityparts.LifePart;
 import dk.sdu.storm331.cbse.common.data.entityparts.MovingPart;
 import dk.sdu.storm331.cbse.common.data.entityparts.PositionPart;
 import dk.sdu.storm331.cbse.common.services.IEntityProcessingService;
-
+import dk.sdu.storm331.cbse.common.util.SPILocator;
 
 
 /**
@@ -27,21 +28,24 @@ public class PlayerControlSystem implements IEntityProcessingService {
         for (Entity player : world.getEntities(Player.class)) {
             PositionPart positionPart = player.getPart(PositionPart.class);
             MovingPart movingPart = player.getPart(MovingPart.class);
+            LifePart lifePart = player.getPart(LifePart.class);
 
             movingPart.setLeft(gameData.getKeys().isDown(LEFT));
             movingPart.setRight(gameData.getKeys().isDown(RIGHT));
             movingPart.setUp(gameData.getKeys().isDown(UP));
 
-            /*
+
             if (gameData.getKeys().isDown(GameKeys.SPACE)) {
-                Entity bullet = Lookup.getDefault().lookup(BulletSPI.class).createBullet(player, gameData);
-                world.addEntity(bullet);
+                for (BulletSPI bullet : SPILocator.locateAll(BulletSPI.class)) {
+                    world.addEntity(bullet.createBullet(player, gameData));
+                }
             }
-             */
+
             
             
             movingPart.process(gameData, player);
             positionPart.process(gameData, player);
+            lifePart.process(gameData, player);
 
             updateShape(player);
         }
